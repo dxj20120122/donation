@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>支持我们的音乐梦想 - 捐赠页面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* 简约卡片效果 */
+        .card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 顶栏 */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 70px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            transition: all 0.3s ease;
+            background-color: #fff;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-item {
+            color: #333;
+            text-decoration: none;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            color: #000;
+            text-decoration: underline;
+        }
+
+        /* 侧栏 */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 70px;
+            width: 280px;
+            height: calc(100vh - 70px);
+            padding: 30px 20px;
+            z-index: 999;
+            transform: translateX(-250px);
+            transition: transform 0.3s ease;
+            background-color: #fff;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-toggle {
+            position: absolute;
+            right: -40px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 80px;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-left: none;
+            border-radius: 0 20px 20px 0;
+            color: #333;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .sidebar-content {
+            color: #333;
+        }
+
+        .sidebar h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .donation-stats {
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .recent-donors {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .donor-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            font-size: 14px;
+            animation: slideInLeft 0.5s ease;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            margin-left: 30px;
+            margin-top: 100px;
+            margin-bottom: 100px;
+            padding: 0 30px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.sidebar-open {
+            margin-left: 310px;
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 60px 0;
+            color: #333;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            margin-bottom: 40px;
+            color: #666;
+        }
+
+        /* 捐赠卡片区域 */
+        .donation-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .donation-card {
+            padding: 30px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .donation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 24px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .amount-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .amount-btn {
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            background: #f9f9f9;
+            color: #333;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .amount-btn:hover,
+        .amount-btn.active {
+            background: #e0e0e0;
+            border-color: #bdbdbd;
+        }
+
+        .custom-amount {
+            margin: 20px 0;
+        }
+
+        .custom-amount input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            background: #f9f9f9;
+            color: #333;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .custom-amount input::placeholder {
+            color: #999;
+        }
+
+        .custom-amount input:focus {
+            outline: none;
+            border-color: #999;
+        }
+
+        .donate-btn {
+            width: 100%;
+            padding: 15px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .donate-btn:hover {
+            background: #000;
+            transform: translateY(-2px);
+        }
+
+        .donate-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 支付码模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            color: #333;
+            min-width: 350px;
+            background: white;
+            animation: modalAppear 0.3s ease;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            background: #f9f9f9;
+            margin: 20px auto;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #666;
+            border: 1px solid #e0e0e0;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #333;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* 进度展示区 */
+        .progress-section {
+            margin: 60px 0;
+            padding: 30px;
+            border-radius: 10px;
+            color: #333;
+            text-align: center;
+            background: white;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #333;
+            border-radius: 5px;
+            transition: width 1s ease;
+        }
+
+        /* 底栏 */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            color: #333;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .footer-content {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            font-size: 14px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-link {
+            width: 36px;
+            height: 36px;
+            background: #f5f5f5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .social-link:hover {
+            background: #e0e0e0;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 0 15px;
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .donation-cards {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+        }
+
+        /* 动画类 */
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 顶栏 -->
+    <header class="header">
+        <div class="logo">🎵 音乐梦想站</div>
+        <nav class="nav-menu">
+            <a href="index.html" class="nav-item">首页</a>
+            <a href="https://music.moujie.dpdns.org" class="nav-item">音乐库</a>
+            <a href="#about" class="nav-item">关于我们</a>
+            <a href="#contact" class="nav-item">联系方式</a>
+        </nav>
+    </header>
+
+    <!-- 侧栏 -->
+    <aside class="sidebar">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">📊</button>
+        <div class="sidebar-content">
+            <h3>💰 捐赠统计</h3>
+            <div class="donation-stats" id="statsContainer">
+                <!-- 数据将通过JavaScript动态加载 -->
+            </div>
+
+            <h3>🏆 最近捐赠</h3>
+            <div class="recent-donors" id="donorsContainer">
+                <!-- 数据将通过JavaScript动态加载 -->
+            </div>
+        </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content" id="mainContent">
+        <!-- 英雄区域 -->
+        <section class="hero-section">
+            <h1 class="hero-title">支持我们的音乐梦想</h1>
+            <p class="hero-subtitle">每一份捐赠都是对音乐梦想的支持，帮助我们建设更好的免费音乐平台</p>
+        </section>
+
+        <!-- 捐赠卡片 -->
+        <section class="donation-cards">
+            <div class="donation-card card fade-in-up">
+                <h3 class="card-title">💝 支持作者</h3>
+                <p>帮助我们维持服务器运行域名购买和日常运营</p>
+                <div class="amount-buttons">
+                    <button class="amount-btn" onclick="selectAmount(this, 1)">¥1</button>
+                    <button class="amount-btn" onclick="selectAmount(this, 5)">¥5</button>
+                    <button class="amount-btn" onclick="selectAmount(this, 10)">¥10</button>
+                </div>
+                <div class="custom-amount" style="display: none;">
+                    <input type="number" placeholder="自定义金额..." id="custom1">
+                </div>
+                <button class="donate-btn" onclick="openPayment('alipay', 'custom1')">
+                    微信赞赏 💙
+                </button>
+            </div>
+
+            <div class="donation-card card fade-in-up">
+                <h3 class="card-title">🎈 运营成本</h3>
+                <p>帮助我们运营服务器和域名</p>
+                <div class="amount-buttons">
+                    <button class="amount-btn" onclick="selectAmount(this, 10)">¥10</button>
+                    <button class="amount-btn" onclick="selectAmount(this, 15)">¥15</button>
+                    <button class="amount-btn" onclick="selectAmount(this, 20)">¥20</button>
+                </div>
+                <div class="custom-amount" style="display: none;">
+                    <input type="number" placeholder="自定义金额..." id="custom2">
+                </div>
+                <button class="donate-btn" onclick="openPayment('wechat', 'custom2')">
+                    微信捐赠 💚
+                </button>
+            </div>
+
+            <div class="donation-card card fade-in-up">
+                <h3 class="card-title">🚀 功能开发</h3>
+                <p>支持我们开发更多酷炫功能，提升用户体验</p>
+                <div class="amount-buttons">
+                    <button class="amount-btn" onclick="selectAmount(this, 20)">¥20</button>
+                    <button class="amount-btn" onclick="selectAmount(this, 25)">¥25</button>
+                    <button class="amount-btn" onclick="selectAmount(this, 30)">¥30</button>
+                </div>
+                <div class="custom-amount" style="display: none;">
+                    <input type="number" placeholder="自定义金额..." id="custom3">
+                </div>
+                <button class="donate-btn" onclick="openPayment('other', 'custom3')">
+                    微信捐赠 🥏
+                </button>
+            </div>
+        </section>
+
+        <!-- 进度展示 -->
+        <section class="progress-section card">
+            <h2>🎯 本月筹款目标</h2>
+            <p id="goalText">目标：¥500 | 已筹集：¥0</p>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%" id="progressFill"></div>
+            </div>
+            <p id="remainingText">距离目标还差 ¥500，感谢每位支持者！</p>
+        </section>
+    </main>
+
+    <!-- 支付模态框 -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closePayment()">✕</button>
+            <h2 id="paymentTitle">扫码支付</h2>
+            <div class="qr-code" id="qrCode">
+                请使用相应APP扫描二维码
+            </div>
+            <p id="paymentAmount">支付金额：¥0</p>
+            <p>赞赏成功后等待核实！</p>
+            <p>约一周核实期将您添加至名单以致感谢!</p>
+            <p>感谢您的支持！❤️</p>
+        </div>
+    </div>
+
+    <!-- 底栏 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <span>© 2025 音乐梦想站 - Simple Music | 让音乐连接世界</span>
+            <div class="social-links">
+                <a href="mailto:dxj20120122@outlook.com" class="social-link">📧</a>
+                <a href="https://music.moujie.dpdns.org" class="social-link">🎵</a>
+                <a href="#18255391942" class="social-link">📱</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 数据存储和读取
+        const DATA_FILE = 'donation_data.json';
+        const GOAL_AMOUNT = 500;
+        
+        // 初始化数据
+        let donationData = {
+            totalAmount: 0,
+            donorCount: 0,
+            recentDonors: [],
+            lastUpdated: new Date().toISOString()
+        };
+
+        // 从JSON文件加载数据
+        async function loadData() {
+            try {
+                const response = await fetch(DATA_FILE);
+                if (response.ok) {
+                    const data = await response.json();
+                    donationData = data;
+                    updateUI();
+                }
+            } catch (error) {
+                console.error('加载数据失败:', error);
+                // 如果文件不存在，使用默认数据并保存
+                saveData();
+            }
+        }
+
+        // 保存数据到JSON文件
+        async function saveData() {
+            donationData.lastUpdated = new Date().toISOString();
+            const dataStr = JSON.stringify(donationData, null, 2);
+            
+            // 在实际应用中，这里应该发送到服务器保存
+            // 这里只是模拟保存操作
+            console.log('保存数据:', dataStr);
+            
+            // 更新UI
+            updateUI();
+        }
+
+        // 更新UI显示
+        function updateUI() {
+            // 更新统计信息
+            document.getElementById('statsContainer').innerHTML = `
+                <div class="stat-item">
+                    <span>本月总计</span>
+                    <span>¥${donationData.totalAmount}</span>
+                </div>
+                <div class="stat-item">
+                    <span>捐赠人数</span>
+                    <span>${donationData.donorCount}人</span>
+                </div>
+                <div class="stat-item">
+                    <span>目标进度</span>
+                    <span>${((donationData.totalAmount / GOAL_AMOUNT) * 100 || 0).toFixed(1)}%</span>
+                </div>
+            `;
+
+            // 更新捐赠者列表
+            const donorsContainer = document.getElementById('donorsContainer');
+            donorsContainer.innerHTML = '';
+            donationData.recentDonors.slice(0, 5).forEach(donor => {
+                const donorItem = document.createElement('div');
+                donorItem.className = 'donor-item';
+                donorItem.innerHTML = `
+                    <div><strong>${donor.name || '匿名用户'}</strong></div>
+                    <div>¥${donor.amount} - ${formatTime(donor.time)}</div>
+                `;
+                donorsContainer.appendChild(donorItem);
+            });
+
+            // 更新进度条
+            const progress = (donationData.totalAmount / GOAL_AMOUNT) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            
+            // 更新目标文本
+            document.getElementById('goalText').textContent = `目标：¥${GOAL_AMOUNT} | 已筹集：¥${donationData.totalAmount}`;
+            document.getElementById('remainingText').textContent = `距离目标还差 ¥${Math.max(0, GOAL_AMOUNT - donationData.totalAmount)}，感谢每位支持者！`;
+        }
+
+        // 格式化时间
+        function formatTime(isoString) {
+            const date = new Date(isoString);
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+            
+            if (diffInSeconds < 60) return '刚刚';
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}分钟前`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}小时前`;
+            return `${Math.floor(diffInSeconds / 86400)}天前`;
+        }
+
+        // 侧栏切换
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.getElementById('mainContent');
+
+            sidebar.classList.toggle('active');
+            mainContent.classList.toggle('sidebar-open');
+        }
+
+        // 选择金额
+        function selectAmount(button, amount) {
+            // 移除其他按钮的活跃状态
+            const siblings = button.parentNode.querySelectorAll('.amount-btn');
+            siblings.forEach(btn => btn.classList.remove('active'));
+
+            // 激活当前按钮
+            button.classList.add('active');
+
+            // 更新对应的自定义输入框
+            const card = button.closest('.donation-card');
+            const customInput = card.querySelector('input');
+            customInput.value = amount;
+        }
+
+        // 打开支付窗口
+        function openPayment(type, inputId) {
+            const customInput = document.getElementById(inputId);
+            const amount = customInput.value || '0';
+
+            if (amount <= 0) {
+                alert('请选择或输入捐赠金额！');
+                return;
+            }
+
+            const modal = document.getElementById('paymentModal');
+            const title = document.getElementById('paymentTitle');
+            const amountText = document.getElementById('paymentAmount');
+            const qrCode = document.getElementById('qrCode');
+
+            amountText.textContent = `支付金额：¥${amount}`;
+
+            // 清空之前的样式
+            qrCode.style.backgroundImage = '';
+            qrCode.style.backgroundSize = 'cover';
+            qrCode.style.backgroundPosition = 'center';
+
+            switch (type) {
+                case 'alipay':
+                    title.textContent = '微信扫码赞赏';
+                    qrCode.innerHTML = ''; // 清空文字内容
+                    qrCode.style.backgroundImage = 'url("myselfRMB.jpg")';
+                    break;
+                case 'wechat':
+                    title.textContent = '微信扫码捐赠';
+                    qrCode.innerHTML = '';
+                    qrCode.style.backgroundImage = 'url("runRMB.jpg")';
+                    break;
+                case 'other':
+                    title.textContent = '微信扫码支持';
+                    qrCode.innerHTML = '';
+                    qrCode.style.backgroundImage = 'url("doRMB.jpg")';
+                    break;
+            }
+
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+
+            // 模拟支付成功
+            setTimeout(() => {
+                if (modal.style.display === 'block') {
+                    showPaymentSuccess(amount);
+                }
+            }, 15000);
+        }
+
+        // 关闭支付窗口
+        function closePayment() {
+            const modal = document.getElementById('paymentModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // 支付成功提示
+        function showPaymentSuccess(amount) {
+            closePayment();
+
+            // 更新数据
+            const amountNum = parseInt(amount);
+            donationData.totalAmount += amountNum;
+            donationData.donorCount += 1;
+            donationData.recentDonors.unshift({
+                name: '匿名用户',
+                amount: amountNum,
+                time: new Date().toISOString()
+            });
+            
+            // 保存数据
+            saveData();
+
+            // 创建成功提示
+            const successDiv = document.createElement('div');
+            successDiv.innerHTML = `
+                <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                           background: rgba(0, 0, 0, 0.9); color: white; padding: 30px; 
+                           border-radius: 10px; text-align: center; z-index: 3000;">
+                    <h2>🎉 支付待核实！约一周核实期将您添加至名单以致感谢!</h2>
+                    <p>感谢您 ¥${amount} 的慷慨捐赠！</p>
+                    <p>您的支持是我们前进的动力！</p>
+                </div>
+            `;
+
+            document.body.appendChild(successDiv);
+
+            // 6秒后移除提示
+            setTimeout(() => {
+                document.body.removeChild(successDiv);
+            }, 6000);
+        }
+
+        // 点击模态框外部关闭
+        document.getElementById('paymentModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closePayment();
+            }
+        });
+
+        // 键盘事件
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closePayment();
+            }
+        });
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function () {
+            // 加载数据
+            loadData();
+            
+            // 添加滚动效果
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+                    }
+                });
+            });
+
+            document.querySelectorAll('.donation-card').forEach(card => {
+                observer.observe(card);
+            });
+        });
+
+        // 强制所有链接在新标签页打开
+        function forceAnchorTagsNewTab() {
+            const anchors = document.querySelectorAll('a:not([target="_blank"])');
+            anchors.forEach(anchor => {
+                if (!anchor.target || anchor.target === '_self') {
+                    anchor.target = '_blank';
+                }
+            });
+        }
+
+        // 初始处理
+        forceAnchorTagsNewTab();
+
+        // 监听DOM变化，动态加载的链接也生效
+        const observer = new MutationObserver(() => {
+            forceAnchorTagsNewTab();
+        });
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    </script>
+</body>
+
+</html>

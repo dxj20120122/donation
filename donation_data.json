@@ -1,0 +1,12 @@
+{
+  "totalAmount": 1,
+  "donorCount": 1,
+  "recentDonors": [
+    {
+      "name": "草莓软糖",
+      "amount": 1,
+      "time": "2025-05-24T14:30:00.000Z"
+    }
+  ],
+  "lastUpdated": "2025-05-24T14:30:00.000Z"
+}
